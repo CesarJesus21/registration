@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -67,4 +68,9 @@ public class UserService implements UserDetailsService {
     public List<UserEntity> getUsers(){
         return this.appUserRepository.findAll();
     }
+
+    public Optional<UserEntity> findByEmail(String emial){
+        return this.appUserRepository.findByEmail(emial);
+    }
+
 }
