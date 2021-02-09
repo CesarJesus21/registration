@@ -20,8 +20,7 @@ public class RegistrationService {
 
     public String register(RegistrationDto request) {
 
-        String token = userService.signUpUser(
-                new UserEntity(
+        return userService.signUpUser(new UserEntity(
                         request.getFirstName(),
                         request.getLastName(),
                         request.getEmail(),
@@ -29,8 +28,6 @@ public class RegistrationService {
                         new ArrayList<>(Arrays.asList(new RoleEntity("1", "ROLE_USER")))
                 )
         );
-
-        return token;
     }
 
 
@@ -49,7 +46,7 @@ public class RegistrationService {
         }
 
         confirmationTokenService.setConfirmedAt(token);
-        userService.enableAppUser(confirmationToken.getUserEntity().getEmail());
+        userService.enableUser(confirmationToken.getUserEntity().getEmail());
         return "confirmed";
     }
 }

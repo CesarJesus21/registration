@@ -3,7 +3,6 @@ package com.cesarjesus.registration.controller;
 import com.cesarjesus.registration.entity.UserEntity;
 import com.cesarjesus.registration.service.UserService;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

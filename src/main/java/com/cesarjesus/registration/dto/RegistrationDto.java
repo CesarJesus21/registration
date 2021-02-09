@@ -16,10 +16,10 @@ import javax.validation.constraints.NotEmpty;
 public class RegistrationDto {
 
 
-    @NotEmpty(message = "no empty")
+    @NotEmpty(message = "{first.name.not.empty}")
     private final String firstName;
     private final String lastName;
-    @Email(message = "El emial es incorrecto")
+    @Email(message = "{email.not.format}")
     private final String email;
     private final String password;
 }

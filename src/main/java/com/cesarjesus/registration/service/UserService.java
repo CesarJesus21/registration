@@ -19,33 +19,34 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private final static String USER_NOT_FOUND_MSG = "user with email %s not found";
 
-    private final UserRepository appUserRepository;
+
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return appUserRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
+    public UserDetails loadUserByUsername(String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User ".concat(email).concat(" not found")));
     }
 
     public String signUpUser(UserEntity userEntity) {
-        boolean userExists = appUserRepository.findByEmail(userEntity.getEmail()).isPresent();
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(userEntity.getEmail());
 
-        if (userExists) {
-            // TODO check of attributes are the same and
-            // TODO if email not confirmed send confirmation email.
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntitySaved = userEntityOptional.get();
+            if(userEntitySaved.isEnabled())
+                throw new IllegalStateException("email already taken");
 
-            throw new IllegalStateException("email already taken");
+            userEntity.setId(userEntitySaved.getId());
         }
 
         String encodedPassword = bCryptPasswordEncoder.encode(userEntity.getPassword());
 
         userEntity.setPassword(encodedPassword);
 
-        appUserRepository.save(userEntity);
+        userRepository.save(userEntity);
 
         String token = UUID.randomUUID().toString();
 
@@ -61,16 +62,16 @@ public class UserService implements UserDetailsService {
         return token;
     }
 
-    public int enableAppUser(String email) {
-        return appUserRepository.enableAppUser(email);
+    public int enableUser(String email) {
+        return userRepository.enableUser(email);
     }
 
     public List<UserEntity> getUsers(){
-        return this.appUserRepository.findAll();
+        return this.userRepository.findAll();
     }
 
     public Optional<UserEntity> findByEmail(String emial){
-        return this.appUserRepository.findByEmail(emial);
+        return this.userRepository.findByEmail(emial);
     }
 
 }
